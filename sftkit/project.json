@@ -1,0 +1,37 @@
+{
+  "name": "sftkit",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "sftkit/sftkit",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "make lint",
+        "cwd": "sftkit"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "make format",
+        "cwd": "sftkit"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "make test",
+        "cwd": "sftkit"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "make package",
+        "cwd": "sftkit"
+      }
+    }
+  }
+}

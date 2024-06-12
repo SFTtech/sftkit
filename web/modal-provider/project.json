@@ -1,0 +1,8 @@
+{
+  "name": "modal-provider",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "web/modal-provider/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {}
+}

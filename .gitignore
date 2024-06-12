@@ -36,6 +36,11 @@ coverage.xml
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
 
+# PDM
+.pdm-python
+.pdm-build
+.venv
+
 # mypy
 .mypy_cache/
 .dmypy.json
@@ -45,6 +50,13 @@ dmypy.json
 .ruff_cache
 
 # Node
+# compiled output
+dist
+tmp
+/out-tsc
+
+# NX stuff
+.nx
 
 # dependencies
 node_modules

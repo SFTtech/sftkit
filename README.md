@@ -24,4 +24,4 @@ For ideas, problems, ..., use the [issue tracker](https://github.com/SFTtech/sft
 License
 -------
 
-**MIT** license; see [copying.md](copying.md).
+**MIT** license; see [LICENSE](LICENSE).

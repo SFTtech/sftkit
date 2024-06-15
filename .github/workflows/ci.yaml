@@ -26,7 +26,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: pdm sync -d -G testing
+        run: pdm sync -d
 
       - name: Lint
         run: npx nx run-many --target=lint
@@ -52,7 +52,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: pdm sync -d -G testing
+        run: pdm sync -d
 
       - name: Test
         run: npx nx run-many --target=test
@@ -78,7 +78,7 @@ jobs:
           python-version: "3.11"
 
       - name: Install Python dependencies
-        run: pdm sync -d -G testing
+        run: pdm sync -d
 
       - name: Build
         run: npx nx run-many --target=build

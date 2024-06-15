@@ -8,30 +8,30 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run mypy sftkit",
-        "cwd": "sftkit"
+        "command": "pdm run -p .. mypy .",
+        "cwd": "{projectRoot}"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run ruff .",
-        "cwd": "sftkit"
+        "command": "pdm run -p .. ruff check .",
+        "cwd": "{projectRoot}"
       },
       "dependsOn": ["typecheck"]
     },
     "format": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run ruff format .",
-        "cwd": "sftkit"
+        "command": "pdm run -p .. ruff format .",
+        "cwd": "{projectRoot}"
       }
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run pytest . --doctest-modules",
-        "cwd": "sftkit"
+        "command": "pdm run -p .. pytest . --doctest-modules",
+        "cwd": "{projectRoot}"
       }
     },
     "build": {
@@ -39,7 +39,7 @@
       "inputs": ["default"],
       "options": {
         "command": "pdm build",
-        "cwd": "sftkit"
+        "cwd": "{projectRoot}"
       }
     }
   }

@@ -3,7 +3,8 @@ from typing import Type, TypeVar
 
 import asyncpg
 from pydantic import BaseModel
-from sfdkit.error import NotFound
+
+from sftkit.error import NotFound
 
 T = TypeVar("T", bound=BaseModel)
 

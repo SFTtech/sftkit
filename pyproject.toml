@@ -5,7 +5,14 @@ readme = "README.md"
 requires-python = ">=3.11"
 
 [tool.pdm.dev-dependencies]
-dev = ["-e file:///${PROJECT_ROOT}/sftkit", "mypy", "ruff"]
+dev = [
+    "-e file:///${PROJECT_ROOT}/sftkit",
+    "mypy",
+    "ruff",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+]
 
 [tool.ruff]
 line-length = 120

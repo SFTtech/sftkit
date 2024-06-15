@@ -16,10 +16,10 @@
     "baseUrl": ".",
     "strict": true,
     "paths": {
-      "@sfdkit/components": ["web/components/src/index.ts"],
-      "@sfdkit/form-components": ["web/form-components/src/index.ts"],
-      "@sfdkit/modal-provider": ["web/modal-provider/src/index.ts"],
-      "@sfdkit/utils": ["web/utils/src/index.ts"]
+      "@sftkit/components": ["web/components/src/index.ts"],
+      "@sftkit/form-components": ["web/form-components/src/index.ts"],
+      "@sftkit/modal-provider": ["web/modal-provider/src/index.ts"],
+      "@sftkit/utils": ["web/utils/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

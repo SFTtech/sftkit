@@ -5,31 +5,40 @@
   "projectType": "library",
   "tags": [],
   "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pdm run mypy sftkit",
+        "cwd": "sftkit"
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "make lint",
+        "command": "pdm run ruff .",
         "cwd": "sftkit"
-      }
+      },
+      "dependsOn": ["typecheck"]
     },
     "format": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "make format",
+        "command": "pdm run ruff format .",
         "cwd": "sftkit"
       }
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "make test",
+        "command": "pdm run pytest . --doctest-modules",
         "cwd": "sftkit"
       }
     },
     "build": {
       "executor": "nx:run-commands",
+      "inputs": ["default"],
       "options": {
-        "command": "make package",
+        "command": "pdm build",
         "cwd": "sftkit"
       }
     }

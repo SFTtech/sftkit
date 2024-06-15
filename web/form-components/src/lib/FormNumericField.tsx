@@ -1,5 +1,5 @@
 import * as React from "react";
-import { NumericInput, NumericInputProps } from "@stustapay/components";
+import { NumericInput, NumericInputProps } from "@sftkit/components";
 import { FormikProps } from "formik";
 
 export interface FormNumericInputProps<Name extends string, Values>

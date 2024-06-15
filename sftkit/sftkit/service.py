@@ -7,7 +7,8 @@ from random import random
 from typing import Awaitable, Callable, Generic, TypeVar, overload
 
 import asyncpg
-from sfdkit.database import Pool
+
+from sftkit.database import Pool
 
 T = TypeVar("T")
 R = TypeVar("R")
@@ -31,7 +32,9 @@ def with_db_transaction(func: Callable[..., Awaitable[R]]) -> Callable[..., Awai
 
 
 @overload
-def with_db_transaction(read_only: bool) -> Callable[[Callable[..., Awaitable[R]]], Callable[..., Awaitable[R]]]:
+def with_db_transaction(
+    read_only: bool,
+) -> Callable[[Callable[..., Awaitable[R]]], Callable[..., Awaitable[R]]]:
     """Case with arguments"""
 
 
@@ -104,7 +107,10 @@ def with_retryable_db_transaction(
                     try:
                         async with conn.transaction(isolation=None if read_only else "serializable"):
                             return await func(self, conn=conn, **kwargs)
-                    except (asyncpg.exceptions.DeadlockDetectedError, asyncpg.exceptions.SerializationError) as e:
+                    except (
+                        asyncpg.exceptions.DeadlockDetectedError,
+                        asyncpg.exceptions.SerializationError,
+                    ) as e:
                         current_retries -= 1
                         # random quadratic back off, with a max of 1 second
                         delay = min(random() * (n_retries - current_retries) ** 2 * 0.0001, 1.0)

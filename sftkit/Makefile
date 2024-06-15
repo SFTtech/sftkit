@@ -1,30 +1,30 @@
 .PHONY: test
 test:
-	pytest . --doctest-modules
-
-.PHONY: check-format
-check-format:
-	ruff format --check
+	pdm run pytest . --doctest-modules
 
 .PHONY: format
 format:
-	ruff format
+	pdm run ruff format
 
 .PHONY: lint
-lint: ruff mypy
+lint: ruff mypy check-format
 
 .PHONY: ruff
 ruff:
-	ruff check .
+	pdm run ruff check .
 
 .PHONY: ruff-fix
 ruff-fix:
-	ruff check . --fix
+	pdm run ruff check . --fix
 
 .PHONY: mypy
 mypy:
-	mypy .
+	pdm run mypy .
 
-.PHONY: package
+.PHONY: check-format
+check-format:
+	pdm run ruff format --check
+
+.PHONY: build
 package:
-	python3 -m build
+	pdm build

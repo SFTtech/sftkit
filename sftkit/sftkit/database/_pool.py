@@ -4,8 +4,9 @@ import ssl
 from typing import Literal
 
 import asyncpg
-from sfdkit.database._config import DatabaseConfig
-from sfdkit.database._connection import Connection, init_connection
+
+from sftkit.database._config import DatabaseConfig
+from sftkit.database._connection import Connection, init_connection
 
 logger = logging.getLogger(__name__)
 

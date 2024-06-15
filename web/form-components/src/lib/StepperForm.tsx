@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Stack, Step, StepButton, Stepper } from "@mui/material";
-import { toFormikValidationSchema } from "@sfdkit/utils";
+import { toFormikValidationSchema } from "@sftkit/utils";
 import { FormikProps, Formik, FormikHelpers, Form } from "formik";
 import * as React from "react";
 import { z } from "zod";

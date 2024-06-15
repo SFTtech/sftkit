@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Select, SelectProps } from "@stustapay/components";
+import { Select, SelectProps } from "@sftkit/components";
 import { FormikProps } from "formik";
 
 export type FormSelectProps<Name extends string, Values, Option, Multiple extends boolean> = {

@@ -1,0 +1,84 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: ["master"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Set up Python with PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pdm sync -d -G testing
+
+      - name: Lint
+        run: npx nx run-many --target=lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Set up Python with PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pdm sync -d -G testing
+
+      - name: Test
+        run: npx nx run-many --target=test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Set up Python with PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pdm sync -d -G testing
+
+      - name: Build
+        run: npx nx run-many --target=build

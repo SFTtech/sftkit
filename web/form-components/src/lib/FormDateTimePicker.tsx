@@ -3,6 +3,12 @@ import { DateTimePicker, DateTimePickerProps } from "@mui/x-date-pickers";
 import { FormikProps } from "formik";
 import { DateTime } from "luxon";
 
+declare module "@mui/x-date-pickers/models" {
+  interface PickerValidDateLookup {
+    luxon: DateTime;
+  }
+}
+
 export type FormDateTimePickerProps<Name extends string, Values> = {
   name: Name;
   formik: FormikProps<Values>;
@@ -20,6 +26,7 @@ export function FormDateTimePicker<Name extends string, Values extends Partial<R
 
   return (
     <DateTimePicker
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       value={formik.values[name] != null ? DateTime.fromISO(formik.values[name]!) : null}
       ampm={false}
       onChange={handleChange}

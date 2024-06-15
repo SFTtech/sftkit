@@ -3,8 +3,8 @@ import os
 import shutil
 import tempfile
 
-from sfdkit import util
-from sfdkit.database.config import DatabaseConfig
+from sftkit import util
+from sftkit.database._config import DatabaseConfig
 
 
 async def psql_attach(config: DatabaseConfig):

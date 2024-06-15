@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from sfdkit.database._config import DatabaseConfig
-from sfdkit.database._migrations import SchemaMigration, apply_migrations
-from sfdkit.database._pool import Pool, create_db_pool
+from sftkit.database._config import DatabaseConfig
+from sftkit.database._migrations import SchemaMigration, apply_migrations
+from sftkit.database._pool import Pool, create_db_pool
 
 
 class Database:

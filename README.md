@@ -8,16 +8,57 @@ Software Development Kit for SFT projects.
 
 ## Contributing
 
+This repo is using [NX](https://nx.dev/) as mono-repo management tooling.
+
+- First install nodejs in the current lts version (20).
+
+Then install node dependencies via
+
+```bash
+npm install
+```
+
 To start hacking on the python parts simply use [pdm](https://pdm-project.org) to install all dependencies.
 
 ```bash
 pdm install
 ```
 
-To start hacking on the web parts install all dependencies via npm
+### Packages in this repo
+
+| Name            | Directory             | Package Name              | Technology |
+| --------------- | --------------------- | ------------------------- | ---------- |
+| sftkit          | `sftkit`              | `sftkit`                  | Python     |
+| components      | `web/components`      | `@sftkit/components`      | TypeScript |
+| form-components | `web/form-components` | `@sftkit/form-components` | TypeScript |
+| modal-provider  | `web/modal-provider`  | `@sftkit/modal-provider`  | TypeScript |
+| utils           | `web/utils`           | `@sftkit/utils`           | TypeScript |
+
+#### Linting
+
+To run respective linters on a project run
 
 ```bash
-npm install
+npx nx lint <project-name>
+```
+
+#### Formatting
+
+```bash
+npx nx run sftkit:format
+npx nx format
+```
+
+#### Testing
+
+```bash
+npx nx test <project-name>
+```
+
+#### Building
+
+```bash
+npx nx build <project-name>
 ```
 
 ## Contact

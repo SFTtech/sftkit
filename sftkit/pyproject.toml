@@ -4,9 +4,10 @@ build-backend = "pdm.backend"
 
 [project]
 name = "sftkit"
-version = "0.1.0"
+version = "0.1.1-alpha.1"
 license = { text = "MIT" }
 maintainers = [{ name = "Michael Loipführer", email = "milo@sft.lol" }]
+dynamic = ["description"]
 readme = "README.md"
 classifiers = [
     "Operating System :: OS Independent",
@@ -28,6 +29,9 @@ dependencies = [
 
 [project.urls]
 Source = "https://github.com/SFTTech/sftkit"
+
+[project.scripts]
+sftkit = "sftkit.devel:cli_main"
 
 [tool.coverage.run]
 source = ["sftkit"]

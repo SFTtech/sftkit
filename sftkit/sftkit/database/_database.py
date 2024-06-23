@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from sftkit.database._config import DatabaseConfig
-from sftkit.database._migrations import SchemaMigration, apply_migrations
-from sftkit.database._pool import Pool, create_db_pool
+from ._attach import psql_attach
+from ._config import DatabaseConfig
+from ._migrations import SchemaMigration, apply_migrations, MIGRATION_TABLE, reload_db_code
+from ._pool import Pool, create_db_pool
 
 
 class Database:
@@ -11,8 +12,11 @@ class Database:
         self.migrations_dir = migrations_dir
         self.code_dir = code_dir
 
+        self._pool: Pool | None = None
+
     async def create_pool(self, n_connections=10) -> Pool:
-        return await create_db_pool(self.config, n_connections=n_connections)
+        self._pool = await create_db_pool(self.config, n_connections=n_connections)
+        return self._pool
 
     async def apply_migrations(self, until_migration: str | None = None) -> None:
         pool = await self.create_pool(n_connections=1)
@@ -26,5 +30,29 @@ class Database:
         finally:
             await pool.close()
 
-    async def list_migrations(self) -> list[SchemaMigration]:
+    async def attach(self):
+        return await psql_attach(self.config)
+
+    async def reload_code(self):
+        pool = await self.create_pool(n_connections=1)
+
+        try:
+            async with pool.acquire() as conn:
+                async with conn.transaction(isolation="serializable"):
+                    await reload_db_code(conn, code_path=self.code_dir)
+        finally:
+            await pool.close()
+
+    def list_migrations(self) -> list[SchemaMigration]:
         return SchemaMigration.migrations_from_dir(self.migrations_dir)
+
+    async def get_current_migration_version(self) -> str | None:
+        assert self._pool is not None
+        revision = await self._pool.fetchval(f"select version from {MIGRATION_TABLE} limit 1")
+        return revision
+
+    def get_desired_migration_version(self) -> str | None:
+        desired_migration = SchemaMigration.latest_migration(self.migrations_dir)
+        if desired_migration is None:
+            return None
+        return desired_migration.version

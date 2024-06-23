@@ -1,7 +1,8 @@
 import logging
+import os
 import re
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 import asyncpg
 
@@ -170,6 +171,13 @@ class SchemaMigration:
         await _run_postgres_code(conn, self.code, self.file_name)
 
     @classmethod
+    def latest_migration(cls, migrations_dir: Path) -> Union["SchemaMigration", None]:
+        migrations = cls.migrations_from_dir(migrations_dir)
+        if len(migrations) == 0:
+            return None
+        return migrations[-1]
+
+    @classmethod
     def migrations_from_dir(cls, migrations_dir: Path) -> list["SchemaMigration"]:
         """
         returns an ordered list of migrations with their dependencies resolved
@@ -266,3 +274,17 @@ async def apply_migrations(
                 raise ValueError(f"Unknown migration {curr_migration} present in database")
 
             await apply_db_code(conn=conn, code_path=code_path)
+
+
+def create_migration(migration_path: Path, name: str):
+    migrations = SchemaMigration.migrations_from_dir(migration_path)
+    filename = f"{str(len(migrations)).zfill(4)}-{name}.sql"
+    new_revision_version = os.urandom(4).hex()
+    file_path = migration_path / filename
+
+    prev_migration_version = migrations[-1].version if len(migrations) > 0 else "null"
+    migration_content = f"-- migration: {new_revision_version}\n-- requires: {prev_migration_version}\n"
+    with file_path.open("w+") as f:
+        f.write(migration_content)
+
+    logger.info(f"Created new migration {file_path}")

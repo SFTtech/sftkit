@@ -1,0 +1,12 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[project]
+name = "test_package"
+version = "0.0.1"
+requires-python = ">=3.11"
+
+[tool.sftkit]
+db_code_dir = "test_package/db_code"
+db_migrations_dir = "test_package/db_migrations"

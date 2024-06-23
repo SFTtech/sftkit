@@ -65,7 +65,7 @@ def _load_toml(path: Path) -> dict[str, Any]:
         return tomllib.load(f)
 
 
-def _find_pyproject_toml(start_path: Path | None) -> Path | None:
+def _find_pyproject_toml(start_path: Path) -> Path | None:
     for directory in (start_path, *start_path.parents):
         pyproject_path = directory / "pyproject.toml"
         if pyproject_path.is_file():

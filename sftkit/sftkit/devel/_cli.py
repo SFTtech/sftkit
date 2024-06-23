@@ -7,6 +7,7 @@ import typer
 
 from sftkit import database
 from sftkit.util import log_setup
+
 from ._config import read_config
 from ._debian import build_debian_packages as _build_debian_packages
 

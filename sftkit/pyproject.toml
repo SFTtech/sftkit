@@ -57,6 +57,7 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["I", "F", "E", "PL"]
+ignore = ["PLR0913", "E722"]
 
 [tool.mypy]
 ignore_missing_imports = true

@@ -1,4 +1,4 @@
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from fastapi import Request, WebSocket
 from starlette.types import ASGIApp, Receive, Scope, Send

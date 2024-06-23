@@ -4,7 +4,7 @@ http server base class
 
 import asyncio
 import logging
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 from urllib.parse import urlparse
 
 import asyncpg
@@ -16,6 +16,10 @@ from fastapi.routing import APIRoute
 from ._config import HTTPServerConfig
 from ._context import ContextMiddleware
 from ._error import (
+    AccessDenied,
+    NotFound,
+    ServiceException,
+    Unauthorized,
     access_exception_handler,
     bad_request_exception_handler,
     catchall_exception_handler,
@@ -23,12 +27,6 @@ from ._error import (
     service_exception_handler,
     try_again_later_exception_handler,
     unauthorized_exception_handler,
-)
-from ._error import (
-    AccessDenied,
-    NotFound,
-    ServiceException,
-    Unauthorized,
 )
 
 ContextT = TypeVar("ContextT")

@@ -1,3 +1,5 @@
+import typing
+
 from fastapi import Request, status
 from fastapi.responses import JSONResponse
 
@@ -9,8 +11,9 @@ from sftkit.error import (
 )
 
 
-def not_found_exception_handler(request: Request, exc: NotFound):
+def not_found_exception_handler(request: Request, broad_exception: Exception) -> JSONResponse:
     del request
+    exc = typing.cast(NotFound, broad_exception)
     return JSONResponse(
         status_code=status.HTTP_404_NOT_FOUND,
         content={
@@ -23,8 +26,9 @@ def not_found_exception_handler(request: Request, exc: NotFound):
     )
 
 
-def service_exception_handler(request: Request, exc: ServiceException):
+def service_exception_handler(request: Request, broad_exception: Exception) -> JSONResponse:
     del request
+    exc = typing.cast(ServiceException, broad_exception)
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
         content={
@@ -35,8 +39,9 @@ def service_exception_handler(request: Request, exc: ServiceException):
     )
 
 
-def access_exception_handler(request: Request, exc: AccessDenied):
+def access_exception_handler(request: Request, broad_exception: Exception) -> JSONResponse:
     del request
+    exc = typing.cast(AccessDenied, broad_exception)
     return JSONResponse(
         status_code=status.HTTP_403_FORBIDDEN,
         content={
@@ -47,8 +52,9 @@ def access_exception_handler(request: Request, exc: AccessDenied):
     )
 
 
-def unauthorized_exception_handler(request: Request, exc: Unauthorized):
+def unauthorized_exception_handler(request: Request, broad_exception: Exception) -> JSONResponse:
     del request
+    exc = typing.cast(Unauthorized, broad_exception)
     return JSONResponse(
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={
@@ -59,7 +65,7 @@ def unauthorized_exception_handler(request: Request, exc: Unauthorized):
     )
 
 
-def try_again_later_exception_handler(request: Request, exc: Exception):
+def try_again_later_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     del request
     return JSONResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -72,7 +78,7 @@ def try_again_later_exception_handler(request: Request, exc: Exception):
     )
 
 
-def bad_request_exception_handler(request: Request, exc: Exception):
+def bad_request_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     del request
     return JSONResponse(
         status_code=status.HTTP_400_BAD_REQUEST,
@@ -84,7 +90,7 @@ def bad_request_exception_handler(request: Request, exc: Exception):
     )
 
 
-def catchall_exception_handler(request: Request, exc: Exception):
+def catchall_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     del request
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

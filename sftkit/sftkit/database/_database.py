@@ -2,7 +2,7 @@ from pathlib import Path
 
 from ._attach import psql_attach
 from ._config import DatabaseConfig
-from ._migrations import SchemaMigration, apply_migrations, MIGRATION_TABLE, reload_db_code
+from ._migrations import MIGRATION_TABLE, SchemaMigration, apply_migrations, reload_db_code
 from ._pool import Pool, create_db_pool
 
 

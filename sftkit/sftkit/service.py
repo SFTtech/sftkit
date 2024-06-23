@@ -1,10 +1,11 @@
 import asyncio
 import logging
+import typing
 from abc import ABC
 from functools import wraps
 from inspect import Parameter, signature
 from random import random
-from typing import Awaitable, Callable, Generic, TypeVar, overload, Concatenate, ParamSpec
+from typing import Awaitable, Callable, Concatenate, Generic, ParamSpec, TypeVar, overload
 
 import asyncpg
 
@@ -54,12 +55,12 @@ def with_db_connection(
     func: Callable[Concatenate[Self, P], Awaitable[R]],
 ) -> Callable[Concatenate[Self, P], Awaitable[R]]:
     @wraps(func)
-    async def wrapper(self, **kwargs: P.kwargs):
+    async def wrapper(self, *args: P.args, **kwargs: P.kwargs):
         if "conn" in kwargs:
-            return await func(self, **kwargs)
+            return await func(self, *args, **kwargs)
 
         async with self.db_pool.acquire() as conn:
-            return await func(self, conn=conn, **kwargs)
+            return await func(self, *args, conn=conn, **kwargs)
 
     return wrapper
 
@@ -68,20 +69,20 @@ def _with_db_isolation_transaction(
     func: Callable[Concatenate[Self, P], Awaitable[R]], read_only: bool, n_retries: int | None = None
 ) -> Callable[Concatenate[Self, P], Awaitable[R]]:
     @wraps(func)
-    async def wrapper(self, **kwargs: P.kwargs):
+    async def wrapper(self, *args: P.args, **kwargs: P.kwargs):
         _add_readonly_to_kwargs(read_only, kwargs, func)
 
         max_retries = n_retries or self.default_transaction_retries
         current_retries = max_retries
         if "conn" in kwargs:
-            return await func(self, **kwargs)
+            return await func(self, *args, **kwargs)
 
         async with self.db_pool.acquire() as conn:
             exception = None
             while current_retries > 0:
                 try:
                     async with conn.transaction(isolation=None if read_only else "serializable"):
-                        return await func(self, conn=conn, **kwargs)
+                        return await func(self, *args, conn=conn, **kwargs)
                 except (
                     asyncpg.exceptions.DeadlockDetectedError,
                     asyncpg.exceptions.SerializationError,
@@ -121,6 +122,7 @@ def with_db_transaction(
     """Case with arguments"""
 
 
+@typing.no_type_check
 def with_db_transaction(read_only, n_retries: int | None = None):
     if callable(read_only):
         return _with_db_isolation_transaction(read_only, read_only=False, n_retries=n_retries)

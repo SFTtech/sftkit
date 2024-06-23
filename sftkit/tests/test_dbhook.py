@@ -4,8 +4,7 @@ import threading
 import asyncpg
 import pytest
 
-from sftkit.database import DatabaseHook, DatabaseConfig
-from sftkit.database import create_db_pool
+from sftkit.database import DatabaseConfig, DatabaseHook, create_db_pool
 
 
 @pytest.mark.skip("currently does not work as test setup is not yet finalized")

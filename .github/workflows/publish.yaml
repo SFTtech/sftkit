@@ -33,7 +33,7 @@ jobs:
         run: pdm sync -d
 
       - name: Publish
-        run: npx nx release publish
+        run: npx nx release publish --projects sftkit
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NPM_CONFIG_PROVENANCE: true

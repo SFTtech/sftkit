@@ -1,6 +1,6 @@
 {
   "executors": {
-    "release": {
+    "release-publish": {
       "implementation": "./src/executors/release-publish/executor",
       "schema": "./src/executors/release-publish/schema.json",
       "description": "release publish executor"

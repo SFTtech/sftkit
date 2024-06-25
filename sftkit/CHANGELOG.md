@@ -1,3 +1,15 @@
+## 0.2.3 (2024-06-25)
+
+
+### 🩹 Fixes
+
+- **nx-python:** get publish executor working
+
+
+### ❤️  Thank You
+
+- Michael Loipführer
+
 ## 0.2.2 (2024-06-25)
 
 

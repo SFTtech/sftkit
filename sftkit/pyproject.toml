@@ -5,7 +5,7 @@ build-backend = "pdm.backend"
 
 [project]
 name = "sftkit"
-version = "0.2.1"
+version = "0.2.2"
 license = { text = "MIT" }
 maintainers = [{ name = "Michael Loipführer", email = "milo@sft.lol" }]
 dynamic = ["description"]

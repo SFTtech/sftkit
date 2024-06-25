@@ -1,3 +1,15 @@
+## 0.2.2 (2024-06-25)
+
+
+### 🩹 Fixes
+
+- **nx-python:** correct executor naming
+
+
+### ❤️  Thank You
+
+- Michael Loipführer
+
 ## 0.2.1 (2024-06-25)
 
 

@@ -1,5 +1,7 @@
 /* eslint-disable */
-export default {
+import { type Config } from "jest";
+
+const config: Config = {
   displayName: "utils",
   preset: "../../jest.preset.js",
   transform: {
@@ -14,5 +16,7 @@ export default {
     ],
   },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx"],
-  coverageDirectory: "../../coverage/packages/utils",
+  coverageDirectory: "../../coverage/web/utils",
 };
+
+export = config;

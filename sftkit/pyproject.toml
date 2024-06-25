@@ -37,16 +37,6 @@ asyncio_mode = "auto"
 minversion = "6.0"
 testpaths = ["tests"]
 
-[tool.bumpversion]
-current_version = "0.1.0"
-commit = false
-files = [
-    { filename = "pyproject.toml" },
-    { filename = "sftkit/__init__.py" },
-    { filename = "CHANGELOG.md", search = "Unreleased", replace = "{new_version} ({now:%Y-%m-%d})" },
-    { filename = "CHANGELOG.md", search = "v{current_version}...HEAD", replace = "v{current_version}...v{new_version}" },
-]
-
 [tool.ruff]
 line-length = 120
 target-version = "py311"

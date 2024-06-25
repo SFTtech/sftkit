@@ -19,6 +19,7 @@
       "@sftkit/components": ["web/components/src/index.ts"],
       "@sftkit/form-components": ["web/form-components/src/index.ts"],
       "@sftkit/modal-provider": ["web/modal-provider/src/index.ts"],
+      "@sftkit/nx-python": ["tools/nx-python/src/index.ts"],
       "@sftkit/utils": ["web/utils/src/index.ts"]
     }
   },

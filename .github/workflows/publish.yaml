@@ -1,0 +1,41 @@
+name: Publish
+on:
+  push:
+    tags: ["*-*.*.*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Set up Python with PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pdm sync -d
+
+      - name: Publish
+        run: npx nx release publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+          PDM_PUBLISH_USERNAME: __token__
+          PDM_PUBLISH_PASSWORD: ${{ secrets.PYPI_ACCESS_TOKEN }}

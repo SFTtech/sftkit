@@ -56,21 +56,11 @@
     }
   },
   "release": {
-    "releaseTagPattern": "{project}-{version}",
+    "releaseTagPattern": "{projectName}-{version}",
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true
     },
-    "groups": {
-      "web": {
-        "projects": ["web/*"]
-      },
-      "sftkit": {
-        "projects": ["sftkit"],
-        "git": {
-          "commitMessage": "chore(release): {project} {version}"
-        }
-      }
-    }
+    "projects": ["web/*", "sftkit"]
   }
 }

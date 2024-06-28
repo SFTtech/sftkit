@@ -34,17 +34,10 @@ jobs:
         run: pdm sync -d
       
       - name: Publish
-        run: 'npx nx build components && cd dist/web/components && npm publish --provenance'
+        run: '[[ ${{ github.ref_name }} =~ ^(.*)-[0-9]+\.[0-9]+\.[0-9]+$ ]] && export PROJECT="${BASH_REMATCH[1]}" && npx nx release publish --projects $PROJECT --verbose'
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-
-      # - name: Publish
-      #   run: '[[ ${{ github.ref_name }} =~ ^(.*)-[0-9]+\.[0-9]+\.[0-9]+$ ]] && export PROJECT="${BASH_REMATCH[1]}" && npx nx release publish --projects $PROJECT --verbose'
-      #   shell: bash
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
-      #     NPM_CONFIG_PROVENANCE: true
-      #     PDM_PUBLISH_USERNAME: __token__
-      #     PDM_PUBLISH_PASSWORD: ${{ secrets.PYPI_ACCESS_TOKEN }}
+          PDM_PUBLISH_USERNAME: __token__
+          PDM_PUBLISH_PASSWORD: ${{ secrets.PYPI_ACCESS_TOKEN }}

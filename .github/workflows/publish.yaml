@@ -33,7 +33,8 @@ jobs:
         run: pdm sync -d
 
       - name: Publish
-        run: '[[ "$GIT_TAG" =~ ^(.*)-[0-9]+\.[0-9]+\.[0-9]+$ ]] && export PROJECT="${BASH_REMATCH[1]}" && npx nx release publish --projects $PROJECT'
+        run: '[[ ${{ github.ref_name }} =~ ^(.*)-[0-9]+\.[0-9]+\.[0-9]+$ ]] && export PROJECT="${BASH_REMATCH[1]}" && npx nx release publish --projects $PROJECT'
+        shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NPM_CONFIG_PROVENANCE: true

@@ -34,7 +34,7 @@ jobs:
         run: pdm sync -d
       
       - name: Publish
-        run: 'npx build components && cd dist/web/components && npm publish --provenance'
+        run: 'npx nx build components && cd dist/web/components && npm publish --provenance'
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}

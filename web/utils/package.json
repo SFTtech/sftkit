@@ -9,6 +9,11 @@
       "require": "./index.js"
     }
   },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-router-dom": "^6.24.0",
+    "zod": "^3.23.8"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/SFTtech/sftkit",

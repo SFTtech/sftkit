@@ -15,14 +15,13 @@ export default async function runExecutor(options: ReleaseExecutorSchema, contex
 
   const packageRoot = joinPathFragments(context.root, options.packageRoot ?? projectConfig.root);
 
-  const pdmPublishCommandSegments = [`pdm publish`];
+  const command = "pdm publish";
 
   try {
-    const command = pdmPublishCommandSegments.join(" ");
     output.logSingleLine(`Running "${command}"...`);
 
     if (isDryRun) {
-      console.log(`Would publish to https://pypi.org, but '[dry-run]' was set`);
+      output.logSingleLine("Would publish to https://pypi.org, but '[dry-run]' was set");
     } else {
       execSync(command, {
         maxBuffer: LARGE_BUFFER,
@@ -30,8 +29,7 @@ export default async function runExecutor(options: ReleaseExecutorSchema, contex
         stdio: "inherit",
       });
 
-      console.log("");
-      console.log(`Published to https://pypi.org`);
+      output.logSingleLine("Published to https://pypi.org");
     }
 
     return {

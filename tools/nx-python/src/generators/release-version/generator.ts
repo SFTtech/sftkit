@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   formatFiles,
   joinPathFragments,
@@ -203,8 +205,8 @@ To fix this you will either need to add a pyproject.toml file at that location, 
             const previousVersionRef = latestMatchingGitTag
               ? latestMatchingGitTag.tag
               : options.fallbackCurrentVersionResolver === "disk"
-              ? await getFirstGitCommit()
-              : undefined;
+                ? await getFirstGitCommit()
+                : undefined;
 
             if (!previousVersionRef) {
               // This should never happen since the checks above should catch if the current version couldn't be resolved
@@ -481,8 +483,8 @@ function resolveLocalPackageDependencies(
       const dependencyCollection: "dependencies" | "dev-dependencies" | null = dependencies[depProject.name]
         ? "dependencies"
         : devDependencies[depProject.name]
-        ? "dev-dependencies"
-        : null;
+          ? "dev-dependencies"
+          : null;
       if (!dependencyCollection) {
         throw new Error(
           `The project "${projectNode.name}" does not have a local dependency on "${depProject.name}" in its Cargo.toml`

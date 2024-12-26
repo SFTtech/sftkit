@@ -94,3 +94,5 @@ com_crashlytics_export_strings.xml
 crashlytics.properties
 crashlytics-build.properties
 fabric.properties
+vite.config.*.timestamp*
+vitest.config.*.timestamp*

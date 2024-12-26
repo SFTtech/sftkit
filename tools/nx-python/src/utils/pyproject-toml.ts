@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { logger, Tree } from "@nx/devkit";
-import TOML from '@ltd/j-toml';
+import TOML from "@ltd/j-toml";
 import * as fs from "fs";
 
 export interface BuildSystem {
@@ -36,12 +37,12 @@ export interface Project {
   classifiers?: string[];
   urls?: Record<string, string>;
   requires_python?: string;
-  dependencies?: string[],
-  optional_dependencies?: string[],
+  dependencies?: string[];
+  optional_dependencies?: string[];
   scripts?: Record<string, string>;
   gui_scripts?: Record<string, string>;
   entry_points?: Record<string, Record<string, string>>;
-  dynamic?: string[]
+  dynamic?: string[];
 }
 
 export interface PyprojectToml {
@@ -67,20 +68,20 @@ export function loadPyprojectToml(pyprojectTomlPath: string): PyprojectToml {
 }
 
 export function parsePyprojectToml(pyprojectString: string) {
-    return TOML.parse(pyprojectString, {
+  return TOML.parse(pyprojectString, {
     x: { comment: true },
   }) as unknown as PyprojectToml;
 }
 
 export function stringifyPyprojectToml(pyprojectToml: PyprojectToml) {
   const tomlString = TOML.stringify(pyprojectToml, {
-    newlineAround: 'section',
+    newlineAround: "section",
     indent: 4,
   });
   // the following is a very, very dirty hack for dealing with j-toml not being able to configure the type of quotation
 
   if (Array.isArray(tomlString)) {
-    return tomlString.join('\n').replace(/'/g, '"');
+    return tomlString.join("\n").replace(/'/g, '"');
   }
 
   return tomlString.toString().replace(/'/g, '"');
@@ -94,19 +95,14 @@ export function modifyPyprojectToml(
 ) {
   toml[section] ??= TOML.Section({});
   toml[section][key] =
-    typeof value === 'object' && !Array.isArray(value)
+    typeof value === "object" && !Array.isArray(value)
       ? TOML.inline(value as any)
-      : typeof value === 'function'
-      ? value()
-      : value;
+      : typeof value === "function"
+        ? value()
+        : value;
 }
 
-export function modifyCargoNestedTable(
-  toml: PyprojectToml,
-  section: string,
-  key: string,
-  value: object
-) {
+export function modifyCargoNestedTable(toml: PyprojectToml, section: string, key: string, value: object) {
   toml[section] ??= {};
   toml[section][key] = TOML.Section(value as any);
 }

@@ -74,6 +74,7 @@ class Server(Generic[ContextT]):
                 allow_credentials=True,
                 allow_methods=["*"],
                 allow_headers=["*"],
+                expose_headers=["Content-Range"],
             )
 
         forward_allowed_ips = None

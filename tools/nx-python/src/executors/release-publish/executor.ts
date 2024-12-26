@@ -11,18 +11,25 @@ export default async function runExecutor(options: ReleaseExecutorSchema, contex
    */
   const isDryRun = process.env.NX_DRY_RUN === "true" || options.dryRun || false;
 
-  const projectConfig = context.projectsConfigurations!.projects[context.projectName!]!;
+  if (!context.projectName) {
+    throw new Error("project name is empty");
+  }
+
+  const projectConfig = context.projectsConfigurations?.projects[context.projectName];
+
+  if (!projectConfig) {
+    throw new Error("could not find a project config");
+  }
 
   const packageRoot = joinPathFragments(context.root, options.packageRoot ?? projectConfig.root);
 
-  const pdmPublishCommandSegments = [`pdm publish`];
+  const command = "pdm publish";
 
   try {
-    const command = pdmPublishCommandSegments.join(" ");
     output.logSingleLine(`Running "${command}"...`);
 
     if (isDryRun) {
-      console.log(`Would publish to https://pypi.org, but '[dry-run]' was set`);
+      output.logSingleLine("Would publish to https://pypi.org, but '[dry-run]' was set");
     } else {
       execSync(command, {
         maxBuffer: LARGE_BUFFER,
@@ -30,14 +37,14 @@ export default async function runExecutor(options: ReleaseExecutorSchema, contex
         stdio: "inherit",
       });
 
-      console.log("");
-      console.log(`Published to https://pypi.org`);
+      output.logSingleLine("Published to https://pypi.org");
     }
 
     return {
       success: true,
     };
-  } catch (err: any) {
+  } catch (err) {
+    output.logSingleLine(`Error running pdm publish: ${err}`);
     return {
       success: false,
     };

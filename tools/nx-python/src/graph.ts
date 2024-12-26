@@ -13,8 +13,12 @@ export const createNodes: CreateNodesV2 = [
         const root = dirname(projectFile);
         const pyproject = loadPyprojectToml(projectFile);
 
+        if (!pyproject.project?.name) {
+          throw new Error("No name configured in pyproject.toml");
+        }
+
         const pythonPackage = {
-          name: pyproject.project!.name!,
+          name: pyproject.project.name,
           pyprojectToml: pyproject,
           projectRoot: dirname(projectFile),
         };

@@ -1,0 +1,1 @@
+alter table "user" add constraint username_allowlist check (name != 'exclusion');

@@ -25,20 +25,24 @@ def db_config() -> DatabaseConfig:
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="session")
-async def static_test_db_pool(db_config: DatabaseConfig) -> AsyncGenerator[Pool]:
+async def static_test_db_pool(db_config: DatabaseConfig) -> AsyncGenerator[Pool, None]:
     pool = await create_db_pool(cfg=db_config, n_connections=10)
     yield pool
     await pool.close()
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> AsyncGenerator[Database]:
+async def test_db(
+    db_config: DatabaseConfig, static_test_db_pool: Pool
+) -> AsyncGenerator[Database, None]:
     dbname = "".join(random.choices(string.ascii_lowercase, k=20))
     cfg = db_config.model_copy()
     cfg.dbname = dbname
     await static_test_db_pool.execute(f'create database "{dbname}"')
     if db_config.user:
-        await static_test_db_pool.execute(f'alter database "{dbname}" owner to "{db_config.user}"')
+        await static_test_db_pool.execute(
+            f'alter database "{dbname}" owner to "{db_config.user}"'
+        )
     mininal_db_assets = ASSETS_DIR / "minimal_db"
     database = Database(
         config=cfg,
@@ -51,14 +55,14 @@ async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> Async
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db_pool(test_db: Database) -> AsyncGenerator[Pool]:
+async def test_db_pool(test_db: Database) -> AsyncGenerator[Pool, None]:
     pool = await test_db.create_pool(n_connections=10)
     yield pool
     await pool.close()
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db_conn(test_db_pool: Pool) -> AsyncGenerator[Connection]:
+async def test_db_conn(test_db_pool: Pool) -> AsyncGenerator[Connection, None]:
     async with test_db_pool.acquire() as conn:
         yield conn
 

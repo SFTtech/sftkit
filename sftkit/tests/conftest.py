@@ -2,12 +2,13 @@ import os
 import random
 import string
 from pathlib import Path
+from typing import AsyncGenerator
 
 import pytest
 import pytest_asyncio
 from pytest_asyncio import is_async_test
 
-from sftkit.database import DatabaseConfig, Pool, create_db_pool, Connection, Database
+from sftkit.database import Connection, Database, DatabaseConfig, Pool, create_db_pool
 
 ASSETS_DIR = Path(__file__).parent / "assets"
 
@@ -24,14 +25,14 @@ def db_config() -> DatabaseConfig:
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="session")
-async def static_test_db_pool(db_config: DatabaseConfig) -> Pool:
+async def static_test_db_pool(db_config: DatabaseConfig) -> AsyncGenerator[Pool]:
     pool = await create_db_pool(cfg=db_config, n_connections=10)
     yield pool
     await pool.close()
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> Database:
+async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> AsyncGenerator[Database]:
     dbname = "".join(random.choices(string.ascii_lowercase, k=20))
     cfg = db_config.model_copy()
     cfg.dbname = dbname
@@ -40,7 +41,9 @@ async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> Datab
         await static_test_db_pool.execute(f'alter database "{dbname}" owner to "{db_config.user}"')
     mininal_db_assets = ASSETS_DIR / "minimal_db"
     database = Database(
-        config=cfg, migrations_dir=mininal_db_assets / "migrations", code_dir=mininal_db_assets / "code"
+        config=cfg,
+        migrations_dir=mininal_db_assets / "migrations",
+        code_dir=mininal_db_assets / "code",
     )
     await database.apply_migrations()
     yield database
@@ -48,14 +51,14 @@ async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> Datab
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db_pool(test_db: Database) -> Pool:
+async def test_db_pool(test_db: Database) -> AsyncGenerator[Pool]:
     pool = await test_db.create_pool(n_connections=10)
     yield pool
     await pool.close()
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db_conn(test_db_pool: Pool) -> Connection:
+async def test_db_conn(test_db_pool: Pool) -> AsyncGenerator[Connection]:
     async with test_db_pool.acquire() as conn:
         yield conn
 

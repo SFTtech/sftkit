@@ -7,7 +7,7 @@ from typing import Iterable, Optional, Union
 import asyncpg
 
 from sftkit.database import Connection
-from sftkit.database.introspection import list_views, list_triggers, list_functions, list_constraints
+from sftkit.database.introspection import list_constraints, list_functions, list_triggers, list_views
 
 logger = logging.getLogger(__name__)
 

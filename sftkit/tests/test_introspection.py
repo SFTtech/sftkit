@@ -1,5 +1,5 @@
 from sftkit.database import Connection
-from sftkit.database.introspection import list_functions, list_views, list_triggers, list_constraints
+from sftkit.database.introspection import list_constraints, list_functions, list_triggers, list_views
 
 
 async def test_introspection_functions(test_db_conn: Connection):

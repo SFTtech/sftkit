@@ -1,14 +1,9 @@
 import asyncio
-import threading
 
-import asyncpg
-import pytest
-
-from sftkit.database import DatabaseConfig, DatabaseHook, create_db_pool
+from sftkit.database import DatabaseHook, Pool
 
 
-@pytest.mark.skip("currently does not work as test setup is not yet finalized")
-async def test_hook(config: DatabaseConfig, setup_test_db_pool: asyncpg.Pool):
+async def test_hook(test_db_pool: Pool):
     initial_run: bool = False
     received_payload: str = ""
 
@@ -23,25 +18,19 @@ async def test_hook(config: DatabaseConfig, setup_test_db_pool: asyncpg.Pool):
 
     hook: DatabaseHook | None = None
 
-    def hook_thread(**hook_args):
+    async def hook_coro(**hook_args):
         nonlocal hook
-        hook_loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(hook_loop)
-        db_pool = asyncio.run(create_db_pool(config, 2))
-        hook = DatabaseHook(pool=db_pool, **hook_args)
-        asyncio.run(hook.run())
+        hook = DatabaseHook(pool=test_db_pool, **hook_args)
+        await hook.run()
 
     # first round - with initial run
-    ht = threading.Thread(
-        target=hook_thread, kwargs={"channel": "testchannel", "event_handler": trigger, "initial_run": True}
-    )
-    ht.start()
+    ht = asyncio.create_task(hook_coro(channel="testchannel", event_handler=trigger, initial_run=True))
     await asyncio.sleep(0.5)  # wait for connection listener to be set up
-    await setup_test_db_pool.execute("select pg_notify('testchannel', 'rolf');")
+    await test_db_pool.execute("select pg_notify('testchannel', 'rolf');")
     assert hook is not None
     await asyncio.sleep(0.2)  # wait for the notification to arrive
     hook.stop()
-    ht.join()
+    await ht
 
     assert initial_run
     assert received_payload == "rolf"
@@ -50,16 +39,13 @@ async def test_hook(config: DatabaseConfig, setup_test_db_pool: asyncpg.Pool):
     initial_run = False
     received_payload = ""
 
-    ht = threading.Thread(
-        target=hook_thread, kwargs={"channel": "testchannel", "event_handler": trigger, "initial_run": False}
-    )
-    ht.start()
+    ht = asyncio.create_task(hook_coro(channel="testchannel", event_handler=trigger, initial_run=False))
     await asyncio.sleep(0.5)  # wait for connection listener to be set up
-    await setup_test_db_pool.execute("select pg_notify('testchannel', 'lol');")
+    await test_db_pool.execute("select pg_notify('testchannel', 'lol');")
     assert hook is not None
     await asyncio.sleep(0.2)  # wait for the notification to arrive
     hook.stop()
-    ht.join()
+    await ht
 
     assert not initial_run
     assert received_payload == "lol"

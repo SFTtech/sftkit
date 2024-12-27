@@ -6,6 +6,9 @@ from typing import Iterable, Optional, Union
 
 import asyncpg
 
+from sftkit.database import Connection
+from sftkit.database.introspection import list_constraints, list_functions, list_triggers, list_views
+
 logger = logging.getLogger(__name__)
 
 MIGRATION_VERSION_RE = re.compile(r"^-- migration: (?P<version>\w+)$")
@@ -13,7 +16,7 @@ MIGRATION_REQURES_RE = re.compile(r"^-- requires: (?P<version>\w+)$")
 MIGRATION_TABLE = "schema_revision"
 
 
-async def _run_postgres_code(conn: asyncpg.Connection, code: str, file_name: Path):
+async def _run_postgres_code(conn: Connection, code: str, file_name: Path):
     if all(line.startswith("--") for line in code.splitlines()):
         return
     try:
@@ -32,33 +35,23 @@ async def _run_postgres_code(conn: asyncpg.Connection, code: str, file_name: Pat
         raise ValueError(f"Syntax or Access error when executing SQL code ({file_name!s}): {message!r}") from exc
 
 
-async def _drop_all_views(conn: asyncpg.Connection, schema: str):
+async def _drop_all_views(conn: Connection, schema: str):
     # TODO: we might have to find out the dependency order of the views if drop cascade does not work
-    result = await conn.fetch(
-        "select table_name from information_schema.views where table_schema = $1 and table_name !~ '^pg_';",
-        schema,
-    )
-    views = [row["table_name"] for row in result]
+    views = await list_views(conn, schema)
     if len(views) == 0:
         return
 
     # we use drop if exists here as the cascade dropping might lead the view to being already dropped
     # due to being a dependency of another view
-    drop_statements = "\n".join([f"drop view if exists {view} cascade;" for view in views])
+    drop_statements = "\n".join([f"drop view if exists {view.table_name} cascade;" for view in views])
     await conn.execute(drop_statements)
 
 
-async def _drop_all_triggers(conn: asyncpg.Connection, schema: str):
-    result = await conn.fetch(
-        "select distinct on (trigger_name, event_object_table) trigger_name, event_object_table "
-        "from information_schema.triggers where trigger_schema = $1",
-        schema,
-    )
+async def _drop_all_triggers(conn: Connection, schema: str):
+    triggers = await list_triggers(conn, schema)
     statements = []
-    for row in result:
-        trigger_name = row["trigger_name"]
-        table = row["event_object_table"]
-        statements.append(f"drop trigger {trigger_name} on {table};")
+    for trigger in triggers:
+        statements.append(f'drop trigger "{trigger.trigger_name}" on "{trigger.event_object_table}";')
 
     if len(statements) == 0:
         return
@@ -67,27 +60,20 @@ async def _drop_all_triggers(conn: asyncpg.Connection, schema: str):
     await conn.execute(drop_statements)
 
 
-async def _drop_all_functions(conn: asyncpg.Connection, schema: str):
-    result = await conn.fetch(
-        "select proname, pg_get_function_identity_arguments(oid) as signature, prokind from pg_proc "
-        "where pronamespace = $1::regnamespace;",
-        schema,
-    )
+async def _drop_all_functions(conn: Connection, schema: str):
+    funcs = await list_functions(conn, schema)
     drop_statements = []
-    for row in result:
-        kind = row["prokind"].decode("utf-8")
-        name = row["proname"]
-        signature = row["signature"]
-        if kind in ("f", "w"):
+    for func in funcs:
+        if func.prokind in ("f", "w"):
             drop_type = "function"
-        elif kind == "a":
+        elif func.prokind == "a":
             drop_type = "aggregate"
-        elif kind == "p":
+        elif func.prokind == "p":
             drop_type = "procedure"
         else:
-            raise RuntimeError(f'Unknown postgres function type "{kind}"')
+            raise RuntimeError(f'Unknown postgres function type "{func.prokind}"')
 
-        drop_statements.append(f"drop {drop_type} {name}({signature}) cascade;")
+        drop_statements.append(f'drop {drop_type} "{func.proname}"({func.signature}) cascade;')
 
     if len(drop_statements) == 0:
         return
@@ -96,37 +82,31 @@ async def _drop_all_functions(conn: asyncpg.Connection, schema: str):
     await conn.execute(drop_code)
 
 
-async def _drop_all_constraints(conn: asyncpg.Connection, schema: str):
+async def _drop_all_constraints(conn: Connection, schema: str):
     """drop all constraints in the given schema which are not unique, primary or foreign key constraints"""
-    result = await conn.fetch(
-        "select con.conname as constraint_name, rel.relname as table_name, con.contype as constraint_type "
-        "from pg_catalog.pg_constraint con "
-        "   join pg_catalog.pg_namespace nsp on nsp.oid = con.connamespace "
-        "   left join pg_catalog.pg_class rel on rel.oid = con.conrelid "
-        "where nsp.nspname = $1 and con.conname !~ '^pg_' "
-        "   and con.contype != 'p' and con.contype != 'f' and con.contype != 'u';",
-        schema,
-    )
-    constraints = []
-    for row in result:
-        constraint_name = row["constraint_name"]
-        constraint_type = row["constraint_type"].decode("utf-8")
-        table_name = row["table_name"]
+    constraints = await list_constraints(conn, schema)
+    drop_statements = []
+    for constraint in constraints:
+        constraint_name = constraint.conname
+        constraint_type = constraint.contype
+        table_name = constraint.relname
+        if constraint_type in ("p", "f", "u"):
+            continue
         if constraint_type == "c":
-            constraints.append(f"alter table {table_name} drop constraint {constraint_name};")
+            drop_statements.append(f'alter table "{table_name}" drop constraint "{constraint_name}";')
         elif constraint_type == "t":
-            constraints.append(f"drop constraint trigger {constraint_name};")
+            drop_statements.append(f"drop constraint trigger {constraint_name};")
         else:
             raise RuntimeError(f'Unknown constraint type "{constraint_type}" for constraint "{constraint_name}"')
 
-    if len(constraints) == 0:
+    if len(drop_statements) == 0:
         return
 
-    drop_statements = "\n".join(constraints)
-    await conn.execute(drop_statements)
+    drop_cmd = "\n".join(drop_statements)
+    await conn.execute(drop_cmd)
 
 
-async def _drop_db_code(conn: asyncpg.Connection, schema: str):
+async def _drop_db_code(conn: Connection, schema: str):
     await _drop_all_triggers(conn, schema=schema)
     await _drop_all_functions(conn, schema=schema)
     await _drop_all_views(conn, schema=schema)

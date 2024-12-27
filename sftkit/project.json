@@ -1,9 +1,9 @@
 {
   "name": "sftkit",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "sftkit/sftkit",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lang:python"],
   "targets": {
     "typecheck": {
       "executor": "nx:run-commands",

@@ -31,8 +31,33 @@ jobs:
       - name: Lint
         run: npx nx run-many --target=lint
 
-  test:
-    runs-on: ubuntu-latest
+  test-py:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [ 3.11 ]
+        os: [ ubuntu-latest ]
+        postgres-version: [ 15-bookworm ]
+    services:
+      postgres:
+        image: postgres:${{ matrix.postgres-version }}
+        env:
+          POSTGRES_PASSWORD: "password"
+          POSTGRES_USER: "sftkit"
+          POSTGRES_DB: "sftkit_test"
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    env:
+      SFTKIT_TEST_DB_USER: "sftkit"
+      SFTKIT_TEST_DB_HOST: "localhost"
+      SFTKIT_TEST_DB_PORT: "5432"
+      SFTKIT_TEST_DB_DBNAME: "sftkit_test"
+      SFTKIT_TEST_DB_PASSWORD: "password"
     steps:
       - uses: actions/checkout@v4
 
@@ -49,13 +74,34 @@ jobs:
       - name: Set up Python with PDM
         uses: pdm-project/setup-pdm@v3
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Python dependencies
         run: pdm sync -d
 
       - name: Test
-        run: npx nx run-many --target=test
+        run: npx nx run-many --target=test --projects=tag:lang:python
+  
+  test-js:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 20 ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version}}
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+
+      - name: Install node dependencies
+        run: npm ci
+
+      - name: Test
+        run: npx nx run-many --target=test --projects=tag:lang:javascript
 
   build:
     runs-on: ubuntu-latest

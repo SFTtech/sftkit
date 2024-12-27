@@ -49,7 +49,7 @@ async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> Datab
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
 async def test_db_pool(test_db: Database) -> Pool:
-    pool = await test_db.create_pool(n_connections=2)
+    pool = await test_db.create_pool(n_connections=10)
     yield pool
     await pool.close()
 

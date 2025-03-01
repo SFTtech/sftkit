@@ -17,11 +17,11 @@ classifiers = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi>=0.115.6",
-    "typer>=0.15.1",
+    "fastapi>=0.115.10",
+    "typer>=0.15.2",
     "uvicorn>=0.34.0",
     "asyncpg>=0.30.0",
-    "pydantic[email]==2.10.4",
+    "pydantic[email]>=2.10.6",
 ]
 
 [project.urls]

@@ -1,3 +1,13 @@
+## 0.2.1 (2025-03-01)
+
+### 🩹 Fixes
+
+- correct package.json repository references ([199942d](https://github.com/SFTtech/sftkit/commit/199942d))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.2.0 (2024-06-28)
 
 

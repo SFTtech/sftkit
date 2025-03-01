@@ -1,3 +1,13 @@
+## 0.3.1 (2025-03-01)
+
+### 🩹 Fixes
+
+- **sftkit:** bump dependencies ([e03b40c](https://github.com/SFTtech/sftkit/commit/e03b40c))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.3.0 (2024-12-27)
 
 ### 🚀 Features

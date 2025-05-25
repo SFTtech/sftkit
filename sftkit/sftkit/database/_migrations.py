@@ -60,7 +60,10 @@ async def _drop_all_triggers(conn: Connection, schema: str):
     await conn.execute(drop_statements)
 
 
-async def _drop_all_functions(conn: Connection, schema: str):
+async def _drop_all_functions(
+    conn: Connection, schema: str, function_blacklist: list[str], function_blacklist_prefix: str | None
+):
+    blacklist = set(function_blacklist)
     funcs = await list_functions(conn, schema)
     drop_statements = []
     for func in funcs:
@@ -72,6 +75,11 @@ async def _drop_all_functions(conn: Connection, schema: str):
             drop_type = "procedure"
         else:
             raise RuntimeError(f'Unknown postgres function type "{func.prokind}"')
+
+        if func.proname in blacklist:
+            continue
+        if function_blacklist_prefix is not None and func.proname.startswith(function_blacklist_prefix):
+            continue
 
         drop_statements.append(f'drop {drop_type} "{func.proname}"({func.signature}) cascade;')
 
@@ -106,9 +114,13 @@ async def _drop_all_constraints(conn: Connection, schema: str):
     await conn.execute(drop_cmd)
 
 
-async def _drop_db_code(conn: Connection, schema: str):
+async def _drop_db_code(
+    conn: Connection, schema: str, function_blacklist: list[str], function_blacklist_prefix: str | None
+):
     await _drop_all_triggers(conn, schema=schema)
-    await _drop_all_functions(conn, schema=schema)
+    await _drop_all_functions(
+        conn, schema=schema, function_blacklist=function_blacklist, function_blacklist_prefix=function_blacklist_prefix
+    )
     await _drop_all_views(conn, schema=schema)
     await _drop_all_constraints(conn, schema=schema)
 
@@ -220,13 +232,29 @@ async def apply_db_code(conn: asyncpg.Connection, code_path: Path):
         await _run_postgres_code(conn, code, code_file)
 
 
-async def reload_db_code(conn: asyncpg.Connection, code_path: Path):
-    await _drop_db_code(conn, schema="public")
+async def reload_db_code(
+    conn: asyncpg.Connection,
+    code_path: Path,
+    function_blacklist: list[str] | None = None,
+    function_blacklist_prefix: str | None = None,
+):
+    _function_blacklist = function_blacklist or []
+    await _drop_db_code(
+        conn,
+        schema="public",
+        function_blacklist=_function_blacklist,
+        function_blacklist_prefix=function_blacklist_prefix,
+    )
     await apply_db_code(conn, code_path)
 
 
 async def apply_migrations(
-    db_pool: asyncpg.Pool, migration_path: Path, code_path: Path, until_migration: str | None = None
+    db_pool: asyncpg.Pool,
+    migration_path: Path,
+    code_path: Path,
+    until_migration: str | None = None,
+    function_blacklist: list[str] | None = None,
+    function_blacklist_prefix: str | None = None,
 ):
     migrations = SchemaMigration.migrations_from_dir(migration_path)
 
@@ -236,7 +264,13 @@ async def apply_migrations(
 
             curr_migration = await conn.fetchval(f"select version from {MIGRATION_TABLE} limit 1")
 
-            await _drop_db_code(conn=conn, schema="public")
+            _function_blacklist = function_blacklist or []
+            await _drop_db_code(
+                conn=conn,
+                schema="public",
+                function_blacklist=_function_blacklist,
+                function_blacklist_prefix=function_blacklist_prefix,
+            )
             # TODO: perform a dry run to check all migrations before doing anything
 
             found = curr_migration is None

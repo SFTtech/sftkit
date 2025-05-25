@@ -1,3 +1,13 @@
+## 0.3.2 (2025-05-25)
+
+### 🩹 Fixes
+
+- allow blacklisting db functions to prevent being dropped ([c97dc37](https://github.com/SFTtech/sftkit/commit/c97dc37))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.3.1 (2025-03-01)
 
 ### 🩹 Fixes

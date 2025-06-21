@@ -65,5 +65,8 @@
     "version": {
       "conventionalCommits": true
     }
+  },
+  "tui": {
+    "enabled": false
   }
 }

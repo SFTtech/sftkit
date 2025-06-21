@@ -12,7 +12,11 @@
   },
   "peerDependencies": {
     "react": "^19.1.0",
-    "@mui/material": "^7.1.2"
+    "@mui/material": "^7.1.2",
+    "react-i18next": "^15.5.3"
+  },
+  "dependencies": {
+    "mathjs": "^14.5.2"
   },
   "repository": {
     "type": "git",

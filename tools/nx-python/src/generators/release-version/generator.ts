@@ -17,13 +17,8 @@ import {
   resolveSemverSpecifierFromConventionalCommits,
   resolveSemverSpecifierFromPrompt,
 } from "nx/src/command-line/release/utils/resolve-semver-specifier";
-import { isValidSemverSpecifier } from "nx/src/command-line/release/utils/semver";
-import {
-  deriveNewSemverVersion,
-  ReleaseVersionGeneratorResult,
-  validReleaseVersionPrefixes,
-  VersionData,
-} from "nx/src/command-line/release/version";
+import { deriveNewSemverVersion, isValidSemverSpecifier } from "nx/src/command-line/release/utils/semver";
+import { validReleaseVersionPrefixes } from "nx/src/command-line/release/version";
 import { interpolate } from "nx/src/tasks-runner/utils";
 import { prerelease } from "semver";
 import {
@@ -33,6 +28,7 @@ import {
   PyprojectToml,
 } from "../../utils/pyproject-toml";
 import { ReleaseVersionGeneratorSchema } from "./schema";
+import { ReleaseVersionGeneratorResult, VersionData } from "nx/src/command-line/release/version-legacy";
 
 export async function releaseVersionGenerator(
   tree: Tree,

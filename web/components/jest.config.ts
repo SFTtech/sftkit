@@ -3,7 +3,7 @@ import { type Config } from "jest";
 
 const config: Config = {
   displayName: "components",
-  preset: "../../jest.preset.js",
+  preset: "../../jest.preset.ts",
   transform: {
     "^.+\\.[tj]sx?$": [
       "@swc/jest",

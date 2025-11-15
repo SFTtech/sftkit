@@ -98,7 +98,7 @@ async def _drop_all_constraints(conn: Connection, schema: str):
         constraint_name = constraint.conname
         constraint_type = constraint.contype
         table_name = constraint.relname
-        if constraint_type in ("p", "f", "u"):
+        if constraint_type in ("p", "f", "u", "n"):
             continue
         if constraint_type == "c":
             drop_statements.append(f'alter table "{table_name}" drop constraint "{constraint_name}";')

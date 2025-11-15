@@ -1,3 +1,13 @@
+## 0.3.4 (2025-11-15)
+
+### 🩹 Fixes
+
+- also handle null constraints in migrations ([a572086](https://github.com/SFTtech/sftkit/commit/a572086))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.3.3 (2025-05-25)
 
 ### 🩹 Fixes

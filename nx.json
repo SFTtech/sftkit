@@ -34,7 +34,8 @@
       "plugin": "@nx/jest/plugin"
     },
     {
-      "plugin": "@sftkit/nx-python"
+      "plugin": "@nxlv/python",
+      "packageManager": "uv"
     }
   ],
   "generators": {

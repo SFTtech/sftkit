@@ -20,6 +20,8 @@ export async function releaseVersionGenerator(
   tree: Tree,
   options: ReleaseVersionGeneratorSchema
 ): Promise<ReleaseVersionGeneratorResult> {
+    console.log("release version generator running ...")
+    throw new Error("blabla");
   try {
     const versionData: VersionData = {};
 

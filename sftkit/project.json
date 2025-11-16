@@ -1,8 +1,13 @@
 {
   "name": "sftkit",
   "$schema": "../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "sftkit/sftkit",
+  "sourceRoot": "sftkit/src",
   "projectType": "library",
+  "release": {
+    "version": {
+      "generator": "@nxlv/python:release-version"
+    }
+  },
   "tags": ["lang:python"],
   "targets": {
     "typecheck": {

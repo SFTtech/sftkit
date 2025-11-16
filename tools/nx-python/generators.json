@@ -1,9 +1,0 @@
-{
-  "generators": {
-    "release-version": {
-      "factory": "./src/generators/release-version/generator",
-      "schema": "./src/generators/release-version/schema.json",
-      "description": "release-version generator"
-    }
-  }
-}

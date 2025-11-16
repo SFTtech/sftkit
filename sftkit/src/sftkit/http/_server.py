@@ -107,9 +107,10 @@ class Server(Generic[ContextT]):
         # register service instances so they are available in api routes
         # kwargs set here can then be fetched with `name = Depends($name)`
         # in the router kwargs.
+
         self.api.add_middleware(
-            ContextMiddleware,
-            context=context,
+            ContextMiddleware,  # type: ignore
+            context=context,  # type: ignore
         )
         webserver = uvicorn.Server(self.uvicorn_config)
         await webserver.serve()

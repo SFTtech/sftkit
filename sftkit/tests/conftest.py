@@ -17,7 +17,7 @@ ASSETS_DIR = Path(__file__).parent / "assets"
 def db_config() -> DatabaseConfig:
     return DatabaseConfig(
         host=os.environ.get("SFTKIT_TEST_DB_HOST"),
-        port=os.environ.get("SFTKIT_TEST_DB_PORT", 5432),
+        port=int(os.environ.get("SFTKIT_TEST_DB_PORT", "5432")),
         user=os.environ.get("SFTKIT_TEST_DB_USER"),
         password=os.environ.get("SFTKIT_TEST_DB_PASSWORD"),
         dbname=os.environ.get("SFTKIT_TEST_DB_DBNAME", "sftkit_test"),
@@ -32,17 +32,13 @@ async def static_test_db_pool(db_config: DatabaseConfig) -> AsyncGenerator[Pool,
 
 
 @pytest_asyncio.fixture(loop_scope="session", scope="function")
-async def test_db(
-    db_config: DatabaseConfig, static_test_db_pool: Pool
-) -> AsyncGenerator[Database, None]:
+async def test_db(db_config: DatabaseConfig, static_test_db_pool: Pool) -> AsyncGenerator[Database, None]:
     dbname = "".join(random.choices(string.ascii_lowercase, k=20))
     cfg = db_config.model_copy()
     cfg.dbname = dbname
     await static_test_db_pool.execute(f'create database "{dbname}"')
     if db_config.user:
-        await static_test_db_pool.execute(
-            f'alter database "{dbname}" owner to "{db_config.user}"'
-        )
+        await static_test_db_pool.execute(f'alter database "{dbname}" owner to "{db_config.user}"')
     mininal_db_assets = ASSETS_DIR / "minimal_db"
     database = Database(
         config=cfg,

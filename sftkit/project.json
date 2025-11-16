@@ -5,7 +5,7 @@
   "projectType": "library",
   "release": {
     "version": {
-      "generator": "@nxlv/python:release-version"
+      "versionActions": "@nxlv/python/src/release/version-actions"
     }
   },
   "tags": ["lang:python"],

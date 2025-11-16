@@ -57,7 +57,6 @@
     }
   },
   "release": {
-    "releaseTagPattern": "{projectName}-{version}",
     "projectsRelationship": "independent",
     "changelog": {
       "projectChangelogs": true
@@ -65,6 +64,9 @@
     "projects": ["web/*", "sftkit"],
     "version": {
       "conventionalCommits": true
+    },
+    "releaseTag": {
+      "pattern": "{projectName}-{version}"
     }
   },
   "tui": {

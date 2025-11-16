@@ -46,6 +46,14 @@
         "command": "uv build",
         "cwd": "{projectRoot}"
       }
+    },
+    "nx-release-publish": {
+      "executor": "nx:run-commands",
+      "inputs": ["default"],
+      "options": {
+        "commands": ["uv build --package sftkit", "uv publish"],
+        "parallel": false
+      }
     }
   }
 }

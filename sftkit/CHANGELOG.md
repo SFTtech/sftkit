@@ -1,3 +1,18 @@
+## 0.4.0 (2025-11-16)
+
+### 🚀 Features
+
+- switch to uv as dependency manager ([b9ecdde](https://github.com/SFTtech/sftkit/commit/b9ecdde))
+
+### 🩹 Fixes
+
+- **sftkit:** make linter happy ([ad69eb4](https://github.com/SFTtech/sftkit/commit/ad69eb4))
+- switch to nxlv/python instead of self-built nx plugin ([10236ee](https://github.com/SFTtech/sftkit/commit/10236ee))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.3.4 (2025-11-15)
 
 ### 🩹 Fixes

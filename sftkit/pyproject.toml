@@ -1,53 +1,58 @@
 [build-system]
-requires = ["uv_build>=0.9.9,<0.10.0"]
+requires = [ "uv_build>=0.9.9,<0.10.0" ]
 build-backend = "uv_build"
 
 [project]
 name = "sftkit"
 description = "..."
-version = "0.3.4"
-license = { text = "MIT" }
-maintainers = [{ name = "Michael Loipführer", email = "milo@sft.lol" }]
+version = "0.4.0"
 readme = "README.md"
 classifiers = [
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License"
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "fastapi>=0.115.10",
-    "typer>=0.15.2",
-    "uvicorn>=0.34.0",
-    "asyncpg>=0.30.0",
-    "pydantic[email]>=2.10.6",
+  "fastapi>=0.115.10",
+  "typer>=0.15.2",
+  "uvicorn>=0.34.0",
+  "asyncpg>=0.30.0",
+  "pydantic[email]>=2.10.6"
 ]
 
-[project.urls]
-Source = "https://github.com/SFTTech/sftkit"
+  [project.license]
+  text = "MIT"
 
-[project.scripts]
-sftkit = "sftkit.devel:cli_main"
+  [[project.maintainers]]
+  name = "Michael Loipführer"
+  email = "milo@sft.lol"
+
+  [project.urls]
+  Source = "https://github.com/SFTTech/sftkit"
+
+  [project.scripts]
+  sftkit = "sftkit.devel:cli_main"
 
 [tool.coverage.run]
-source = ["sftkit"]
+source = [ "sftkit" ]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
 minversion = "6.0"
-testpaths = ["tests"]
+testpaths = [ "tests" ]
 
 [tool.ruff]
 line-length = 120
 target-version = "py311"
 
-[tool.ruff.lint]
-select = ["I", "F", "E", "PL"]
-ignore = ["PLR0913", "PLC0415", "E722"]
+  [tool.ruff.lint]
+  select = [ "I", "F", "E", "PL" ]
+  ignore = [ "PLR0913", "PLC0415", "E722" ]
 
 [tool.mypy]
 ignore_missing_imports = true
 check_untyped_defs = true
 pretty = true
-plugins = ["pydantic.mypy"]
+plugins = [ "pydantic.mypy" ]

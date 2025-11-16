@@ -10,33 +10,27 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          fetch-depth: 0
-
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
       - name: Set up Nodejs
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: 24
           cache: "npm"
           cache-dependency-path: package-lock.json
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install node dependencies
-        run: npm ci
-
-      - name: Set up Python with PDM
-        uses: pdm-project/setup-pdm@v3
-        with:
-          python-version: "3.11"
-
-      - name: Install Python dependencies
-        run: pdm sync -d
       
       - name: Publish
         run: '[[ ${{ github.ref_name }} =~ ^(.*)-[0-9]+\.[0-9]+\.[0-9]+$ ]] && export PROJECT="${BASH_REMATCH[1]}" && npx nx release publish --projects $PROJECT --verbose'
         shell: bash
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
           NPM_CONFIG_ACCESS: public

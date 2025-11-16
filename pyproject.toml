@@ -1,18 +1,22 @@
 [project]
+name = "sftkit-monorepo"
+version = "0.0.0"
 license = { file = "LICENSE" }
 maintainers = [{ name = "Michael Loipführer", email = "milo@sft.lol" }]
 readme = "README.md"
 requires-python = ">=3.11"
 
-[tool.pdm.dev-dependencies]
+[dependency-groups]
 dev = [
-    "-e file:///${PROJECT_ROOT}/sftkit",
     "mypy",
     "ruff",
     "pytest",
     "pytest-asyncio",
     "pytest-cov",
 ]
+
+[tool.uv.workspace]
+members = ["sftkit"]
 
 [tool.ruff]
 line-length = 120

@@ -23,7 +23,7 @@ export default async function runExecutor(options: ReleaseExecutorSchema, contex
 
   const packageRoot = joinPathFragments(context.root, options.packageRoot ?? projectConfig.root);
 
-  const command = "pdm publish";
+  const command = "uv publish";
 
   try {
     output.logSingleLine(`Running "${command}"...`);

@@ -18,10 +18,10 @@ Then install node dependencies via
 npm install
 ```
 
-To start hacking on the python parts simply use [pdm](https://pdm-project.org) to install all dependencies.
+To start hacking on the python parts simply use [uv](https://docs.astral.sh/uv) to install all dependencies.
 
 ```bash
-pdm install
+uv sync
 ```
 
 ### Packages in this repo

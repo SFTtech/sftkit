@@ -42,7 +42,7 @@
 
 ### 🚀 Features
 
-- **sftkit:** improve pg introspection, prevent deletion of pg_ functions ([6b3010e](https://github.com/SFTtech/sftkit/commit/6b3010e))
+- **sftkit:** improve pg introspection, prevent deletion of pg\_ functions ([6b3010e](https://github.com/SFTtech/sftkit/commit/6b3010e))
 
 ### 🩹 Fixes
 
@@ -56,30 +56,25 @@
 
 ## 0.2.3 (2024-06-25)
 
-
 ### 🩹 Fixes
 
 - **nx-python:** get publish executor working
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Michael Loipführer
 
 ## 0.2.2 (2024-06-25)
 
-
 ### 🩹 Fixes
 
 - **nx-python:** correct executor naming
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Michael Loipführer
 
 ## 0.2.1 (2024-06-25)
-
 
 ### 🚀 Features
 
@@ -89,14 +84,12 @@
 
 - **other:** add nx plugin for python integration and setup python release workflow
 
-
 ### 🩹 Fixes
 
 - pdm python setup in nx integration
 
 - **sftkit:** eliminate all typing and linter issues
 
-
-### ❤️  Thank You
+### ❤️ Thank You
 
 - Michael Loipführer

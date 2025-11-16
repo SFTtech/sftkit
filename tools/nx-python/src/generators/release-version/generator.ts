@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import {
-  formatFiles,
-  joinPathFragments,
-  output,
-  ProjectGraph,
-  ProjectGraphDependency,
-  ProjectGraphProjectNode,
-  Tree,
-  workspaceRoot,
-} from "@nx/devkit";
+import { formatFiles, joinPathFragments, output, ProjectGraphProjectNode, Tree, workspaceRoot } from "@nx/devkit";
 import { relative } from "node:path";
 import { IMPLICIT_DEFAULT_RELEASE_GROUP } from "nx/src/command-line/release/config/config";
 import { getFirstGitCommit, getLatestGitTagForPattern } from "nx/src/command-line/release/utils/git";
@@ -21,12 +12,7 @@ import { deriveNewSemverVersion, isValidSemverSpecifier } from "nx/src/command-l
 import { validReleaseVersionPrefixes } from "nx/src/command-line/release/version";
 import { interpolate } from "nx/src/tasks-runner/utils";
 import { prerelease } from "semver";
-import {
-  parsePyprojectToml,
-  loadPyprojectTomlWithTree,
-  stringifyPyprojectToml,
-  PyprojectToml,
-} from "../../utils/pyproject-toml";
+import { parsePyprojectToml, stringifyPyprojectToml, PyprojectToml } from "../../utils/pyproject-toml";
 import { ReleaseVersionGeneratorSchema } from "./schema";
 import { ReleaseVersionGeneratorResult, VersionData } from "nx/src/command-line/release/version-legacy";
 
@@ -269,23 +255,6 @@ To fix this you will either need to add a pyproject.toml file at that location, 
         }
       }
 
-      // Resolve any local package dependencies for this project (before applying the new version or updating the versionData)
-      // const localPackageDependencies = resolveLocalPackageDependencies(
-      //   tree,
-      //   options.projectGraph,
-      //   projects,
-      //   projectNameToPackageRootMap,
-      //   resolvePackageRoot,
-      //   // includeAll when the release group is independent, as we may be filtering to a specific subset of projects, but we still want to update their dependents
-      //   options.releaseGroup.projectsRelationship === "independent"
-      // );
-      //
-      // const dependentProjects = Object.values(localPackageDependencies)
-      //   .flat()
-      //   .filter((localPackageDependency) => {
-      //     return localPackageDependency.target === project.name;
-      //   });
-
       if (!currentVersion) {
         throw new Error(
           `The current version for project "${project.name}" could not be resolved. Please report this on https://github.com/nrwl/nx`
@@ -306,82 +275,10 @@ To fix this you will either need to add a pyproject.toml file at that location, 
       const newVersion = deriveNewSemverVersion(currentVersion, specifier, options.preid);
       versionData[projectName].newVersion = newVersion;
 
-      pkg!.version = newVersion;
+      data.project!.version = newVersion;
       tree.write(pyprojectTomlPath, stringifyPyprojectToml(data));
 
       log(`✍️  New version ${newVersion} written to ${workspaceRelativePyprojectTomlPath}`);
-
-      // if (dependentProjects.length > 0) {
-      //   log(
-      //     `✍️  Applying new version ${newVersion} to ${dependentProjects.length} ${
-      //       dependentProjects.length > 1 ? "packages which depend" : "package which depends"
-      //     } on ${project.name}`
-      //   );
-      // }
-
-      // for (const dependentProject of dependentProjects) {
-      //   const dependentPackageRoot = projectNameToPackageRootMap.get(dependentProject.source);
-      //   if (!dependentPackageRoot) {
-      //     throw new Error(
-      //       `The dependent project "${dependentProject.source}" does not have a packageRoot available. Please report this issue on https://github.com/nrwl/nx`
-      //     );
-      //   }
-      //   const dependentPkg = loadPyprojectTomlWithTree(tree, dependentPackageRoot, dependentProject.source);
-      //
-      //   // Auto (i.e.infer existing) by default
-      //   let versionPrefix = options.versionPrefix ?? "auto";
-      //   let updatedDependencyData: string | Record<string, string> = "";
-      //
-      //   for (const [dependencyName, dependencyData] of Object.entries(
-      //     dependentPkg[dependentProject.dependencyCollection] ?? {}
-      //   )) {
-      //     if (dependencyName !== dependentProject.target) {
-      //       continue;
-      //     }
-      //
-      //     // For auto, we infer the prefix based on the current version of the dependent
-      //     if (versionPrefix === "auto") {
-      //       versionPrefix = ""; // we don't want to end up printing auto
-      //
-      //       if (currentVersion) {
-      //         const dependencyVersion = typeof dependencyData === "string" ? dependencyData : dependencyData.version;
-      //         const prefixMatch = dependencyVersion.match(/^[~^=]/);
-      //         if (prefixMatch) {
-      //           versionPrefix = prefixMatch[0];
-      //         } else {
-      //           versionPrefix = "";
-      //         }
-      //
-      //         // In python the default version prefix/behavior is ^, so a ^ may have been inferred by pyproject metadata via no prefix or an explicit ^.
-      //         if (versionPrefix === "^") {
-      //           if (!dependencyData.version.startsWith("^")) {
-      //             versionPrefix = "";
-      //           }
-      //         }
-      //       }
-      //     }
-      //     const newVersionWithPrefix = `${versionPrefix}${newVersion}`;
-      //     updatedDependencyData =
-      //       typeof dependencyData === "string"
-      //         ? newVersionWithPrefix
-      //         : {
-      //             ...dependencyData,
-      //             version: newVersionWithPrefix,
-      //           };
-      //     break;
-      //   }
-      //
-      //   const pyprojectTomlToUpdate = joinPathFragments(dependentPackageRoot, "pyproject.toml");
-      //
-      //   modifyPyprojectToml(
-      //     dependentPkg,
-      //     dependentProject.dependencyCollection,
-      //     dependentProject.target,
-      //     updatedDependencyData
-      //   );
-      //
-      //   tree.write(pyprojectTomlToUpdate, stringifyPyprojectToml(dependentPkg));
-      // }
     }
 
     /**
@@ -427,73 +324,4 @@ function createResolvePackageRoot(customPackageRoot?: string) {
       projectName: projectNode.name,
     });
   };
-}
-
-interface LocalPackageDependency extends ProjectGraphDependency {
-  dependencyCollection: "dependencies" | "dev-dependencies";
-}
-
-function resolveLocalPackageDependencies(
-  tree: Tree,
-  projectGraph: ProjectGraph,
-  filteredProjects: ProjectGraphProjectNode[],
-  projectNameToPackageRootMap: Map<string, string>,
-  resolvePackageRoot: (projectNode: ProjectGraphProjectNode) => string,
-  includeAll = false
-): Record<string, LocalPackageDependency[]> {
-  const localPackageDependencies: Record<string, LocalPackageDependency[]> = {};
-
-  const projects = includeAll ? Object.values(projectGraph.nodes) : filteredProjects;
-
-  for (const projectNode of projects) {
-    // Resolve the Cargo.toml path for the project, taking into account any custom packageRoot settings
-    let packageRoot = projectNameToPackageRootMap.get(projectNode.name);
-    // packageRoot wasn't added to the map yet, try to resolve it dynamically
-    if (!packageRoot && includeAll) {
-      packageRoot = resolvePackageRoot(projectNode);
-      if (!packageRoot) {
-        continue;
-      }
-      // Append it to the map for later use within the release version generator
-      projectNameToPackageRootMap.set(projectNode.name, packageRoot);
-    }
-    const projectDeps = projectGraph.dependencies[projectNode.name];
-    if (!projectDeps) {
-      continue;
-    }
-    const localPackageDepsForProject = [];
-    for (const dep of projectDeps) {
-      const depProject = projectGraph.nodes[dep.target];
-      if (!depProject) {
-        continue;
-      }
-      const depProjectRoot = projectNameToPackageRootMap.get(dep.target);
-      if (!depProjectRoot) {
-        throw new Error(
-          `The project "${dep.target}" does not have a packageRoot available. Please report this issue on https://github.com/nrwl/nx`
-        );
-      }
-      const pyprojectToml = loadPyprojectTomlWithTree(tree, resolvePackageRoot(projectNode), projectNode.name);
-      const dependencies = pyprojectToml.dependencies ?? {};
-      const devDependencies = pyprojectToml["dev-dependencies"] ?? {};
-      const dependencyCollection: "dependencies" | "dev-dependencies" | null = dependencies[depProject.name]
-        ? "dependencies"
-        : devDependencies[depProject.name]
-          ? "dev-dependencies"
-          : null;
-      if (!dependencyCollection) {
-        throw new Error(
-          `The project "${projectNode.name}" does not have a local dependency on "${depProject.name}" in its Cargo.toml`
-        );
-      }
-      localPackageDepsForProject.push({
-        ...dep,
-        dependencyCollection,
-      });
-    }
-
-    localPackageDependencies[projectNode.name] = localPackageDepsForProject;
-  }
-
-  return localPackageDependencies;
 }

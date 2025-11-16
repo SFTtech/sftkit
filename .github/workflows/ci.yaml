@@ -8,25 +8,25 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Nodejs
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          node-version: "20"
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      - name: Set up Nodejs
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
           cache: "npm"
           cache-dependency-path: package-lock.json
-
       - name: Install node dependencies
         run: npm ci
-
-      - name: Set up Python with PDM
-        uses: pdm-project/setup-pdm@v3
-        with:
-          python-version: "3.11"
-
-      - name: Install Python dependencies
-        run: pdm sync -d
 
       - name: Lint
         run: npx nx run-many --target=lint
@@ -59,25 +59,25 @@ jobs:
       SFTKIT_TEST_DB_DBNAME: "sftkit_test"
       SFTKIT_TEST_DB_PASSWORD: "password"
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Nodejs
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
-          cache-dependency-path: package-lock.json
-
-      - name: Install node dependencies
-        run: npm ci
-
-      - name: Set up Python with PDM
-        uses: pdm-project/setup-pdm@v3
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
-
-      - name: Install Python dependencies
-        run: pdm sync -d
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      - name: Set up Nodejs
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+      - name: Install node dependencies
+        run: npm ci
 
       - name: Test
         run: npx nx run-many --target=test --projects=tag:lang:python
@@ -86,17 +86,25 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 20 ]
+        node-version: [ 24 ]
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Nodejs
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          node-version: ${{ matrix.node-version}}
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      - name: Set up Nodejs
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
           cache: "npm"
           cache-dependency-path: package-lock.json
-
       - name: Install node dependencies
         run: npm ci
 
@@ -106,25 +114,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Nodejs
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          node-version: "20"
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Install the project
+        run: uv sync --locked --all-extras --dev
+      - name: Set up Nodejs
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
           cache: "npm"
           cache-dependency-path: package-lock.json
-
       - name: Install node dependencies
         run: npm ci
-
-      - name: Set up Python with PDM
-        uses: pdm-project/setup-pdm@v3
-        with:
-          python-version: "3.11"
-
-      - name: Install Python dependencies
-        run: pdm sync -d
 
       - name: Build
         run: npx nx run-many --target=build

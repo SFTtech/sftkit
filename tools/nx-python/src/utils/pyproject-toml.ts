@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { logger, Tree } from "@nx/devkit";
 import TOML from "@ltd/j-toml";
 import * as fs from "fs";
 
@@ -50,16 +49,6 @@ export interface PyprojectToml {
   project?: Project;
   tool?: Record<string, Record<string, any>>;
   [key: string]: any;
-}
-
-export function loadPyprojectTomlWithTree(tree: Tree, projectRoot: string, projectName: string): PyprojectToml {
-  const pyprojectTomlString = tree.read(projectRoot + "/pyproject.toml")?.toString();
-  if (!pyprojectTomlString) {
-    logger.error(`Cannot find a pyproject.toml file in the ${projectName}`);
-    throw new Error();
-  }
-
-  return parsePyprojectToml(pyprojectTomlString);
 }
 
 export function loadPyprojectToml(pyprojectTomlPath: string): PyprojectToml {

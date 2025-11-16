@@ -8,14 +8,14 @@
     "typecheck": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run -p .. mypy .",
+        "command": "uv run mypy .",
         "cwd": "{projectRoot}"
       }
     },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run -p .. ruff check .",
+        "command": "uv run ruff check .",
         "cwd": "{projectRoot}"
       },
       "dependsOn": ["typecheck"]
@@ -23,14 +23,14 @@
     "format": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run -p .. ruff format .",
+        "command": "uv run ruff format .",
         "cwd": "{projectRoot}"
       }
     },
     "test": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "pdm run -p .. pytest . --doctest-modules",
+        "command": "uv run pytest . --doctest-modules",
         "cwd": "{projectRoot}"
       }
     },
@@ -38,7 +38,7 @@
       "executor": "nx:run-commands",
       "inputs": ["default"],
       "options": {
-        "command": "pdm build",
+        "command": "uv build",
         "cwd": "{projectRoot}"
       }
     }

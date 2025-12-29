@@ -43,7 +43,7 @@ async def list_functions(conn: Connection, schema: str) -> list[PgFunctionDef]:
     return await conn.fetch_many(
         PgFunctionDef,
         "select p.*, pg_get_function_identity_arguments(p.oid) as signature from pg_proc as p "
-        "join pg_authid as a on p.proowner = a.oid "
+        "join pg_roles as a on p.proowner = a.oid "
         "where p.pronamespace = $1::regnamespace and a.rolname = CURRENT_USER "
         "  and not exists(select from pg_depend as d where d.objid = p.oid and d.deptype = 'e')",
         schema,

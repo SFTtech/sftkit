@@ -5,7 +5,7 @@ build-backend = "uv_build"
 [project]
 name = "sftkit"
 description = "..."
-version = "0.4.1"
+version = "0.4.2"
 readme = "README.md"
 classifiers = [
   "Operating System :: OS Independent",

@@ -1,3 +1,13 @@
+## 0.4.2 (2025-12-29)
+
+### 🩹 Fixes
+
+- **sftkit:** use pg_roles instead of pg_authid for function filtering ([427680a](https://github.com/SFTtech/sftkit/commit/427680a))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.4.1 (2025-12-29)
 
 ### 🩹 Fixes

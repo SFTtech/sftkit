@@ -1,3 +1,13 @@
+## 0.4.1 (2025-12-29)
+
+### 🩹 Fixes
+
+- **sftkit:** filter out database functions belonging to postgres user / loaded extensions ([580fe77](https://github.com/SFTtech/sftkit/commit/580fe77))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.4.0 (2025-11-16)
 
 ### 🚀 Features

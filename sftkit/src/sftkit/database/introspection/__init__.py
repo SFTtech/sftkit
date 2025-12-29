@@ -37,10 +37,15 @@ class PgFunctionDef(BaseModel):
 
 
 async def list_functions(conn: Connection, schema: str) -> list[PgFunctionDef]:
+    """
+    List all functions which are owned by the current database user and do not belong to any extension.
+    """
     return await conn.fetch_many(
         PgFunctionDef,
-        "select pg_proc.*, pg_get_function_identity_arguments(oid) as signature from pg_proc "
-        "where pronamespace = $1::regnamespace and pg_proc.proname !~ '^pg_';",
+        "select p.*, pg_get_function_identity_arguments(p.oid) as signature from pg_proc as p "
+        "join pg_authid as a on p.proowner = a.oid "
+        "where p.pronamespace = $1::regnamespace and a.rolname = CURRENT_USER "
+        "  and not exists(select from pg_depend as d where d.objid = p.oid and d.deptype = 'e')",
         schema,
     )
 

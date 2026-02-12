@@ -22,7 +22,11 @@ def get_config(
     debug: Annotated[bool, typer.Option(help="enable asyncio debugging")] = False,
 ):
     log_setup(verbose - quiet)
-    asyncio.get_event_loop().set_debug(debug)
+
+    async def helper():
+        asyncio.get_event_loop().set_debug(debug)
+
+    asyncio.run(helper())
 
     project_root, pyproject_toml, config = read_config()
     ctx.obj = SimpleNamespace(pyproject_toml=pyproject_toml, sftkit_config=config, project_root=project_root)

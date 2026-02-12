@@ -1,3 +1,13 @@
+## 0.4.3 (2026-02-12)
+
+### 🩹 Fixes
+
+- **sftkit:** make cli ready for python3.14 ([495adbe](https://github.com/SFTtech/sftkit/commit/495adbe))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.4.2 (2025-12-29)
 
 ### 🩹 Fixes

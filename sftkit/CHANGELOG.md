@@ -1,3 +1,13 @@
+## 0.5.0 (2026-11-14)
+
+### 🚀 Features
+
+- **sftkit:** py dep updates, improve typing of with_db_ funcs ([1e174b3](https://github.com/SFTtech/sftkit/commit/1e174b3))
+
+### ❤️ Thank You
+
+- Michael Loipführer
+
 ## 0.4.3 (2026-02-12)
 
 ### 🩹 Fixes

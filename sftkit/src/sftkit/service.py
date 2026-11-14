@@ -53,7 +53,7 @@ def _add_arg_to_signature(original_func, new_func, name: str, annotation):
 
 def with_db_connection(
     func: Callable[Concatenate[Self, P], Awaitable[R]],
-) -> Callable[Concatenate[Self, P], Awaitable[R]]:
+) -> Callable[Concatenate[Self, ...], Awaitable[R]]:
     @wraps(func)
     async def wrapper(self, *args: P.args, **kwargs: P.kwargs):
         if "conn" in kwargs:
@@ -67,7 +67,7 @@ def with_db_connection(
 
 def _with_db_isolation_transaction(
     func: Callable[Concatenate[Self, P], Awaitable[R]], read_only: bool, n_retries: int | None = None
-) -> Callable[Concatenate[Self, P], Awaitable[R]]:
+) -> Callable[Concatenate[Self, ...], Awaitable[R]]:
     @wraps(func)
     async def wrapper(self, *args: P.args, **kwargs: P.kwargs):
         _add_readonly_to_kwargs(read_only, kwargs, func)
@@ -110,7 +110,7 @@ def _with_db_isolation_transaction(
 @overload
 def with_db_transaction(
     func: Callable[Concatenate[Self, P], Awaitable[R]],
-) -> Callable[Concatenate[Self, P], Awaitable[R]]:
+) -> Callable[Concatenate[Self, ...], Awaitable[R]]:
     """Case without arguments"""
 
 
@@ -118,7 +118,7 @@ def with_db_transaction(
 def with_db_transaction(
     read_only: bool,
     n_retries: int | None = None,
-) -> Callable[[Callable[Concatenate[Self, P], Awaitable[R]]], Callable[Concatenate[Self, P], Awaitable[R]]]:
+) -> Callable[[Callable[Concatenate[Self, P], Awaitable[R]]], Callable[Concatenate[Self, ...], Awaitable[R]]]:
     """Case with arguments"""
 
 

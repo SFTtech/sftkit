@@ -183,11 +183,11 @@ class SchemaMigration:
 
             if (version_match := MIGRATION_VERSION_RE.match(lines[0])) is None:
                 raise ValueError(
-                    f"Invalid version string in migration {migration}, " f"should be of form '-- migration: <name>'"
+                    f"Invalid version string in migration {migration}, should be of form '-- migration: <name>'"
                 )
             if (requires_match := MIGRATION_REQURES_RE.match(lines[1])) is None:
                 raise ValueError(
-                    f"Invalid requires string in migration {migration}, " f"should be of form '-- requires: <name>'"
+                    f"Invalid requires string in migration {migration}, should be of form '-- requires: <name>'"
                 )
 
             version = version_match["version"]

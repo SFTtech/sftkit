@@ -25,6 +25,7 @@ router = APIRouter(
     responses={404: {"description": "not found"}},
 )
 
+
 @router.get("/ping")
 async def ping():
     return "pong"
@@ -38,18 +39,13 @@ class Context:
 class Api:
     def __init__(self, config: HTTPServerConfig = config):
         self.config = config
-        self.server = Server(
-            title="<your title>",
-            config=config,
-            license_name="<your license>",
-            version="0.1.0"
-
-        )
+        self.server = Server(title="<your title>", config=config, license_name="<your license>", version="0.1.0")
         self.server.add_router(router)
 
     async def run(self):
         context = Context(config=self.config)
         await self.server.run(context)
+
 
 if __name__ == "__main__":
     server = Api()
